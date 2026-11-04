@@ -1,0 +1,64 @@
+{% extends "booking/base.html" %}
+
+{% block title %}My Bookings | MovieTime{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">My Bookings</h2>
+
+    {% if bookings %}
+        <div class="row">
+            {% for booking in bookings %}
+            <div class="col-md-6 mb-4">
+                <div class="card bg-dark text-white border-secondary h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">Booking #{{ booking.id }}</h5>
+                            {% if booking.status == 'CONFIRMED' %}
+                                <span class="badge bg-success">Confirmed</span>
+                            {% else %}
+                                <span class="badge bg-danger">Cancelled</span>
+                            {% endif %}
+                        </div>
+
+                        {% with first_seat=booking.seats.first %}
+                            {% if first_seat %}
+                            <p class="mb-1"><strong>{{ first_seat.show.movie.title }}</strong></p>
+                            <p class="text-muted mb-1">
+                                {{ first_seat.show.screen.theatre.name }} | {{ first_seat.show.show_date }} at {{ first_seat.show.show_time }}
+                            </p>
+                            {% endif %}
+                        {% endwith %}
+
+                        <p class="mb-1">Seats: 
+                            {% for seat in booking.seats.all %}
+                                <span class="badge bg-secondary">{{ seat.seat_number }}</span>
+                            {% endfor %}
+                        </p>
+                        <h5 class="text-success mt-3">Total: ₹{{ booking.total_amount }}</h5>
+                    </div>
+                    
+                    {% if booking.status == 'CONFIRMED' %}
+                    <div class="card-footer bg-transparent border-secondary text-end">
+                        <form method="POST" action="{% url 'my_bookings' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this ticket?');">
+                                Cancel Ticket
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-ticket-detailed text-muted" style="font-size: 50px;"></i>
+            <h4 class="mt-3">No bookings yet</h4>
+            <a href="{% url 'home' %}" class="btn btn-book mt-3">Browse Movies</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "booking/base.html" %}
+
+{% block title %}Generate Seats | MovieTime{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card bg-dark text-white border-secondary p-4 mx-auto" style="max-width:600px;">
+        <h2 class="fw-bold">Automatic Seat Generator</h2>
+        <p class="text-secondary">{{ show.movie.title }} | {{ show.show_date }} | {{ show.show_time }}</p>
+        <hr class="border-secondary">
+        <h5>Current Seats: {{ seat_count }}</h5>
+
+        {% if seat_count == 0 %}
+            <form method="POST">
+                {% csrf_token %}
+                <label class="form-label mt-3">Total Number of Seats</label>
+                <input type="number" name="total_seats" class="form-control" min="1" max="500" value="150" required>
+                
+                <label class="form-label mt-3">Seats Per Row</label>
+                <input type="number" name="seats_per_row" class="form-control" min="1" max="50" value="15" required>
+
+                <button class="btn btn-primary w-100 mt-4">Generate Seats</button>
+            </form>
+        {% else %}
+            <div class="alert alert-success mt-3">{{ seat_count }} seats have already been generated.</div>
+            <a href="{% url 'seat_selection' show.id %}" class="btn btn-outline-light w-100">View Seats</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

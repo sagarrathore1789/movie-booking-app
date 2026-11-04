@@ -1,0 +1,69 @@
+{% extends "booking/base.html" %}
+
+{% block title %}Booking Confirmed | MovieTime{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card bg-dark text-white border-success p-4 mx-auto" style="max-width:550px;">
+
+        <div class="text-center">
+            <i class="bi bi-check-circle-fill text-success" style="font-size:60px;"></i>
+            <h2 class="mt-3">Booking Confirmed!</h2>
+            <p class="text-secondary">
+                Your movie tickets have been booked successfully.
+            </p>
+        </div>
+
+        <hr class="border-secondary">
+
+        <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
+
+        <p><strong>Movie:</strong>
+            {% with first_seat=booking.seats.first %}
+                {% if first_seat %}
+                    {{ first_seat.show.movie.title }}
+                {% else %}
+                    —
+                {% endif %}
+            {% endwith %}
+        </p>
+
+        <p><strong>Theatre:</strong>
+            {% with first_seat=booking.seats.first %}
+                {% if first_seat %}
+                    {{ first_seat.show.screen.theatre.name }} ({{ first_seat.show.screen.name }})
+                {% else %}
+                    —
+                {% endif %}
+            {% endwith %}
+        </p>
+
+        <p><strong>Show:</strong>
+            {% with first_seat=booking.seats.first %}
+                {% if first_seat %}
+                    {{ first_seat.show.show_date }} at {{ first_seat.show.show_time }}
+                {% else %}
+                    —
+                {% endif %}
+            {% endwith %}
+        </p>
+
+        <p><strong>Seats:</strong>
+            {% for seat in booking.seats.all %}
+                {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+
+        <h4 class="text-success">Total: ₹{{ booking.total_amount }}</h4>
+
+        <a href="{% url 'home' %}" class="btn btn-primary mt-3">
+            Back to Home
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
